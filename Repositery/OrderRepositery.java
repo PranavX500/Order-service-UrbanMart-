@@ -14,5 +14,10 @@ public interface OrderRepositery extends JpaRepository<Order,Long> {
     List<Order> findByIdIn(List<Long> ids);
     @Query("SELECT o FROM Order o WHERE o.isPaid = false AND o.createdAt < :cutoffTime")
     List<Order> findUnpaidOrdersBefore(@Param("cutoffTime") LocalDateTime cutoffTime);
+
+      @Query("SELECT  o.userId, i.pname, i.price, i.productId,o.isPaid " +
+            "FROM Order o LEFT JOIN o.orderItems i " +
+            "WHERE o.userId = :userId AND o.isPaid=true")
+    List<Object[]> getOrderDetailsByUserId(@Param("userId") Long userId);
     
 }
