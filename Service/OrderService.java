@@ -26,6 +26,25 @@ public class OrderService {
             System.out.println("Deleted unpaid order: " + order.getId());
         }
     }
+       public List<ItemDTO> getOrderBYuserid(Long userId){
+       List<Object[]> order=orderRepositery.getOrderDetailsByUserId(userId);
+        List<ItemDTO>results=new ArrayList<>();
+       for( Object[] row:order) {
+           ItemDTO dto=new ItemDTO();
+
+           dto.setUserId((Long) row[0]);
+           dto.setPname((String) row[1]);
+           dto.setPrice((Double) row[2]);
+           dto.setProductId((Long) row[3]);
+
+           results.add(dto);
+       }
+
+        return results;
+
+
+    }
+
 
    
 
