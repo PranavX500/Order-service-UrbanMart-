@@ -26,7 +26,7 @@ public class OrderService {
             System.out.println("Deleted unpaid order: " + order.getId());
         }
     }
-       public List<ItemDTO> getOrderBYuserid(Long userId){
+   public List<ItemDTO> getOrderBYuserid(Long userId){
        List<Object[]> order=orderRepositery.getOrderDetailsByUserId(userId);
         List<ItemDTO>results=new ArrayList<>();
        for( Object[] row:order) {
