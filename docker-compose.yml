@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-Order_db
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+    environment:
+      MYSQL_ROOT_PASSWORD: "Pranav@2005"
+      MYSQL_DATABASE: Order_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - Order-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: order-service
+    restart: always
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-db:3306/Order_db?allowPublicKeyRetrieval=true&useSSL=false"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: "Pranav@2005"
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka/"
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: true
+      EUREKA_CLIENT_FETCH_REGISTRY: true
+
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+
+      RAZORPAY_KEY_ID: "rzp_test_RkKXQKUjFhu4mv"
+      RAZORPAY_KEY_SECRET: "T5Xghky6s22AAh23Ee1cgQyv"
+
+      SERVER_PORT: 8081
+
+    ports:
+      - "8081:8081"
+
+    networks:
+      - Order-net
+      - app-net
+
+volumes:
+  mysql_data:
+
+networks:
+  Order-net:
+
+  app-net:
+    external: true
