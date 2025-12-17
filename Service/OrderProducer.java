@@ -14,6 +14,8 @@ public class OrderProducer {
     public void sendIds(ProductRequestEvent event){
 
         kafkaTemplate.send("Productids",event);
+        System.out.println(" Sent Event to Kafka: " + event);
+    
         System.out.println(" Sent event to Kafka: " + event);
     }
 }
