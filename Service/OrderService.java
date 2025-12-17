@@ -17,7 +17,7 @@ public class OrderService {
     OrderRepositery orderRepositery;
 
 
-    @Scheduled(fixedRate = 10 * 6 * 1000)
+    @Scheduled(fixedRate = 10 * 60 * 1000)
     public void RemovePendingOrders(){
         LocalDateTime cuttoff= LocalDateTime.now().minusMinutes(10);
         List<Order> pendingOrders=orderRepositery.findUnpaidOrdersBefore(cuttoff);
@@ -46,6 +46,25 @@ public class OrderService {
     }
 
 
-   
+    public List<ItemDTO> getOrderBYuserid(Long userId){
+       List<Object[]> order=orderRepositery.getOrderDetailsByUserId(userId);
+        List<ItemDTO>results=new ArrayList<>();
+       for( Object[] row:order) {
+           ItemDTO dto=new ItemDTO();
+
+           dto.setUserId((Long) row[0]);
+           dto.setPname((String) row[1]);
+           dto.setPrice((Double) row[2]);
+           dto.setProductId((Long) row[3]);
+
+           results.add(dto);
+       }
+
+        return results;
+
+
+    }
+
+
 
 }
