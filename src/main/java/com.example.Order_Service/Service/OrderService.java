@@ -18,14 +18,54 @@ public class OrderService {
 
 
     @Scheduled(fixedRate = 10 * 60 * 1000)
-    public void RemovePendingOrders(){
-        LocalDateTime cuttoff= LocalDateTime.now().minusMinutes(10);
-        List<Order> pendingOrders=orderRepositery.findUnpaidOrdersBefore(cuttoff);
-        for (Order order :  pendingOrders) {
-            orderRepositery.delete(order);
-            System.out.println("Deleted unpaid order: " + order.getId());
+    @Transactional
+    public void ShiftPendingOrders() {
+        LocalDateTime cuttoff1 = LocalDateTime.now().minusMinutes(10);
+
+        Pooling p1=poolingRepositery.findPoolingById(Long.valueOf(1));
+
+
+        System.out.println("On");
+        if (p1 == null || !"Y".equals(p1.getPoolingEnable())) {
+            System.out.print("off");
+            return;
+        }
+        if (p1.getPoolingEnable().equals("Y")) {
+            OrderUnsuccessfull o1 = new OrderUnsuccessfull();
+
+            LocalDateTime cuttoff = LocalDateTime.now().minusMinutes(1);
+            LocalDateTime l1 = LocalDateTime.now();
+            List<Order> pendingOrders = orderRepositery.findUnpaidOrdersBefore(cuttoff);
+            for (Order order : pendingOrders) {
+
+
+
+                try {
+                    o1.setUserId(order.getUserId());
+
+                    o1.setPaid(order.isPaid());
+
+                    o1.setPaymentStatus(order.getPaymentStatus());
+
+                    o1.setCreatedAt(order.getCreatedAt());
+
+                    o1.setMoveTime(l1);
+                    orderUnsuccessfullRepositery.save(o1);
+
+
+
+
+
+
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Error in moving order in archiver", e);
+                }
+
+
+            }
         }
     }
+
 
     public List<ItemDTO> getOrderBYuserid(Long userId){
        List<Object[]> order=orderRepositery.getOrderDetailsByUserId(userId);
@@ -45,6 +85,18 @@ public class OrderService {
 
 
     }
+      public PollingData poolingDTO(){
+        Pooling p1=poolingRepositery.findById(1L).orElseThrow(()->new RuntimeException("Id not found"));
+        System.out.println(p1);
+        PollingData p2=new PollingData();
+        p2.setId(p1.getId());
+        p2.setPoolingEnable(p1.getPoolingEnable());
+        p2.setPollingDate(p1.getPollingDate());
+        return  p2;
+
+
+    }
+
 
 
 
