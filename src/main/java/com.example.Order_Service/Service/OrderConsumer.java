@@ -76,8 +76,8 @@ public class OrderConsumer {
             System.out.println(r1);
         }
         catch (Exception e) {
-            System.err.println("❌ Error processing order: " + e.getMessage());
-            // rethrow → lets DefaultErrorHandler handle retry + DLT
+            System.err.println("error processing order: " + e.getMessage());
+         
         }
     }
 
