@@ -26,7 +26,7 @@ public class OrderConsumer2 {
 
         cache.put(response.getRequestId(), response);
 
-        System.out.println("🔥 Received Razorpay Order for requestId: "
+        System.out.println("Received Razorpay Order for requestId: "
                 + response.getRequestId());
     }
 }
