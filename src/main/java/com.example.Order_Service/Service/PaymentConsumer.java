@@ -23,7 +23,7 @@ private OrderRepositery orderRepository;
         order.setPaymentStatus("Payed");
         orderRepository.save(order);
 
-        System.out.println("✅ Order marked as COMPLETED for orderId: " + event.getOrderId());
+        System.out.println("Order marked as COMPLETED for orderId: " + event.getOrderId());
     }
 
 }
